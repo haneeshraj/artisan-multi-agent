@@ -1,0 +1,340 @@
+{% extends 'base.html' %} {% block title %}Preview Resume - AI Artisan Resume
+Builder{% endblock %} {% block progress %}{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-10">
+    <div class="form-container">
+      <h2 class="section-title text-center">Resume Preview</h2>
+
+      <div class="alert alert-info">
+        <p>
+          Please review your resume information below. If you need to make
+          changes, use the "Edit Section" buttons.
+        </p>
+      </div>
+
+      <!-- Personal Info -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Personal Information</h4>
+          <a
+            href="{{ url_for('edit_section', section='personal_info') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          <h2>{{ data.personal_info.full_name }}</h2>
+          <h5>{{ data.personal_info.professional_title }}</h5>
+          <p>
+            <strong>Location:</strong> {{ data.personal_info.location.city }},
+            {{ data.personal_info.location.state }}, {{
+            data.personal_info.location.country }}<br />
+            <strong>Phone:</strong> {{ data.personal_info.phone }}<br />
+            <strong>Email:</strong> {{ data.personal_info.email }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Online Presence -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Online Presence</h4>
+          <a
+            href="{{ url_for('edit_section', section='online_presence') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            {% if data.online_presence.linkedin %}
+            <li class="list-group-item">
+              <strong>LinkedIn:</strong>
+              <a href="{{ data.online_presence.linkedin }}" target="_blank"
+                >{{ data.online_presence.linkedin }}</a
+              >
+            </li>
+            {% endif %} {% if data.online_presence.github %}
+            <li class="list-group-item">
+              <strong>GitHub:</strong>
+              <a href="{{ data.online_presence.github }}" target="_blank"
+                >{{ data.online_presence.github }}</a
+              >
+            </li>
+            {% endif %} {% if data.online_presence.portfolio %}
+            <li class="list-group-item">
+              <strong>Portfolio:</strong>
+              <a href="{{ data.online_presence.portfolio }}" target="_blank"
+                >{{ data.online_presence.portfolio }}</a
+              >
+            </li>
+            {% endif %} {% if data.online_presence.additional_profiles %} {% for
+            profile in data.online_presence.additional_profiles %}
+            <li class="list-group-item">
+              <strong>{{ profile.platform }}:</strong>
+              <a href="{{ profile.url }}" target="_blank">{{ profile.url }}</a>
+            </li>
+            {% endfor %} {% endif %} {% if not data.online_presence.linkedin and
+            not data.online_presence.github and not
+            data.online_presence.portfolio and not
+            data.online_presence.additional_profiles %}
+            <li class="list-group-item">No online profiles provided.</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Professional Summary -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Professional Summary</h4>
+          <a
+            href="{{ url_for('edit_section', section='professional_summary') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          <h5>Summary</h5>
+          <p>{{ data.professional_summary.summary | nl2br }}</p>
+
+          <h5>Career Objective</h5>
+          <p>{{ data.professional_summary.career_objective | nl2br }}</p>
+
+          <h5>Key Achievements</h5>
+          <p>{{ data.professional_summary.key_achievements | nl2br }}</p>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Skills & Expertise</h4>
+          <a
+            href="{{ url_for('edit_section', section='skills') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          {% set skill_categories = { "Programming Languages": "languages",
+          "Frameworks": "frameworks", "Tools": "tools", "Cloud Platforms":
+          "cloud_platforms", "Databases": "databases", "Libraries": "libraries",
+          "Other Technical Skills": "technical_skills" } %} {% for display_name,
+          key in skill_categories.items() %} {% if data.skills.get(key) and
+          data.skills.get(key)|length > 0 %}
+          <h5>{{ display_name }}</h5>
+          <ul class="list-inline">
+            {% for skill in data.skills.get(key) %}
+            <li class="list-inline-item">
+              <span class="badge bg-secondary p-2 mb-2">
+                {% if skill is mapping %} {{ skill.name }}{% if
+                skill.proficiency %} ({{ skill.proficiency }}){% endif %} {%
+                else %} {{ skill }} {% endif %}
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %} {% endfor %} {% if not data.skills or
+          data.skills.values()|map('length')|sum == 0 %}
+          <p>No skills provided.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Education</h4>
+          <a
+            href="{{ url_for('edit_section', section='education') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          {% if data.education %} {% for edu in data.education %}
+          <div class="mb-3">
+            <h5>{{ edu.degree }}</h5>
+            <p>
+              <strong>{{ edu.institution }}</strong> - {{ edu.location }}<br />
+              <em>{{ edu.graduation_date }}</em>
+              {% if edu.gpa %}<br />GPA: {{ edu.gpa }}{% endif %}
+            </p>
+
+            {% if edu.highlights and edu.highlights|length > 0 %}
+            <strong>Highlights:</strong>
+            <ul>
+              {% for highlight in edu.highlights %}
+              <li>{{ highlight }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          {% if not loop.last %}
+          <hr />
+          {% endif %} {% endfor %} {% else %}
+          <p>No education information provided.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Projects</h4>
+          <a
+            href="{{ url_for('edit_section', section='projects') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          {% if data.projects %} {% for project in data.projects %}
+          <div class="mb-3">
+            <h5>{{ project.name }}</h5>
+            <p>
+              <strong>Duration:</strong> {{ project.start_date }} - {{
+              project.end_date }}<br />
+              {% if project.url %}
+              <strong>URL:</strong>
+              <a href="{{ project.url }}" target="_blank">{{ project.url }}</a
+              ><br />
+              {% endif %}
+            </p>
+
+            <p>{{ project.description | nl2br }}</p>
+
+            <p>
+              <strong>Technologies:</strong> {{ project.technologies|join(', ')
+              }}
+            </p>
+
+            {% if project.highlights and project.highlights|length > 0 %}
+            <strong>Key Highlights:</strong>
+            <ul>
+              {% for highlight in project.highlights %}
+              <li>{{ highlight }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          {% if not loop.last %}
+          <hr />
+          {% endif %} {% endfor %} {% else %}
+          <p>No projects provided.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Professional Experience -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Professional Experience</h4>
+          <a
+            href="{{ url_for('edit_section', section='professional_experience') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          {% if data.professional_experience %} {% for exp in
+          data.professional_experience %}
+          <div class="mb-3">
+            <h5>{{ exp.position }}</h5>
+            <p>
+              <strong>{{ exp.company }}</strong> - {{ exp.location }}<br />
+              <em>{{ exp.start_date }} - {{ exp.end_date }}</em>
+            </p>
+
+            {% if exp.responsibilities and exp.responsibilities|length > 0 %}
+            <ul>
+              {% for resp in exp.responsibilities %}
+              <li>{{ resp }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+          {% if not loop.last %}
+          <hr />
+          {% endif %} {% endfor %} {% else %}
+          <p>No professional experience provided.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="card mb-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Additional Information</h4>
+          <a
+            href="{{ url_for('edit_section', section='additional_info') }}"
+            class="btn btn-sm btn-outline-primary"
+            >Edit</a
+          >
+        </div>
+        <div class="card-body">
+          {% set has_additional_info = false %} {% if
+          data.additional_info.get('certifications') %} {% set
+          has_additional_info = true %}
+          <h5>Certifications</h5>
+          <ul>
+            {% for cert in data.additional_info.certifications %}
+            <li>
+              <strong>{{ cert.name }}</strong> - {{ cert.issuer }} ({{ cert.date
+              }} - {{ cert.expires }})
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %} {% if data.additional_info.get('languages') %} {% set
+          has_additional_info = true %}
+          <h5>Languages</h5>
+          <ul>
+            {% for lang in data.additional_info.languages %}
+            <li>{{ lang.language }} ({{ lang.proficiency }})</li>
+            {% endfor %}
+          </ul>
+          {% endif %} {% if data.additional_info.get('industry') %} {% set
+          has_additional_info = true %}
+          <h5>Industry Focus</h5>
+          <p>{{ data.additional_info.industry }}</p>
+          {% endif %} {% if data.additional_info.get('other') %} {% set
+          has_additional_info = true %}
+          <h5>Other Information</h5>
+          <p>{{ data.additional_info.other | nl2br }}</p>
+          {% endif %} {% if not has_additional_info %}
+          <p>No additional information provided.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <form method="post" class="text-center mt-5">
+        <button type="submit" class="btn btn-success btn-lg">
+          Generate Resume Files
+        </button>
+        <a
+          href="{{ url_for('additional_info') }}"
+          class="btn btn-secondary btn-lg ms-2"
+          >Go Back</a
+        >
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,292 @@
+{% extends 'base.html' %} {% block title %}Education - AI Artisan Resume
+Builder{% endblock %} {% block progress %}
+<div class="progress-container">
+  <div class="progress" style="height: 30px">
+    <div
+      class="progress-bar bg-primary"
+      role="progressbar"
+      style="width: 62.5%"
+      aria-valuenow="62.5"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      62.5%
+    </div>
+  </div>
+  <div class="text-center mt-2">
+    <small>Step 5 of 8: Education</small>
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="form-container">
+      <h2 class="section-title">Education</h2>
+
+      <form method="post">
+        <div id="education-container">
+          {% if data %} {% for edu in data %}
+          <div class="item-card education-item mb-4">
+            <div class="form-group">
+              <label class="form-label required-field"
+                >Degree/Certificate</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="degree"
+                value="{{ edu.get('degree', '') }}"
+                required
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Institution</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="institution"
+                    value="{{ edu.get('institution', '') }}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Location</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="location"
+                    value="{{ edu.get('location', '') }}"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field"
+                    >Graduation Date</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="graduation_date"
+                    value="{{ edu.get('graduation_date', '') }}"
+                    placeholder="Month Year"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label">GPA (Optional)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="gpa"
+                    value="{{ edu.get('gpa', '') }}"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"
+                >Highlights/Achievements (One per line)</label
+              >
+              <textarea class="form-control" name="highlights" rows="4">
+{{ edu.get('highlights', [])|join('\n') }}</textarea
+              >
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger remove-education"
+            >
+              Remove this education entry
+            </button>
+          </div>
+          {% endfor %} {% else %}
+          <div class="item-card education-item mb-4">
+            <div class="form-group">
+              <label class="form-label required-field"
+                >Degree/Certificate</label
+              >
+              <input type="text" class="form-control" name="degree" required />
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Institution</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="institution"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Location</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="location"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field"
+                    >Graduation Date</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="graduation_date"
+                    placeholder="Month Year"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label">GPA (Optional)</label>
+                  <input type="text" class="form-control" name="gpa" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"
+                >Highlights/Achievements (One per line)</label
+              >
+              <textarea
+                class="form-control"
+                name="highlights"
+                rows="4"
+              ></textarea>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <button
+          type="button"
+          id="add-education"
+          class="btn btn-outline-secondary add-item-btn"
+        >
+          <i class="bi bi-plus-circle"></i> Add Another Education Entry
+        </button>
+
+        <div class="action-buttons">
+          <a href="{{ url_for('skills') }}" class="btn btn-secondary">Back</a>
+          <button type="submit" class="btn btn-primary">Next</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // Add new education entry
+    $("#add-education").click(function () {
+      const newEducation = `
+                <div class="item-card education-item mb-4">
+                    <div class="form-group">
+                        <label class="form-label required-field">Degree/Certificate</label>
+                        <input type="text" class="form-control" name="degree" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">Institution</label>
+                                <input type="text" class="form-control" name="institution" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">Location</label>
+                                <input type="text" class="form-control" name="location" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">Graduation Date</label>
+                                <input type="text" class="form-control" name="graduation_date" placeholder="Month Year" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">GPA (Optional)</label>
+                                <input type="text" class="form-control" name="gpa">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Highlights/Achievements (One per line)</label>
+                        <textarea class="form-control" name="highlights" rows="4"></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-education">Remove this education entry</button>
+                </div>
+            `;
+
+      $("#education-container").append(newEducation);
+    });
+
+    // Remove education entry
+    $(document).on("click", ".remove-education", function () {
+      if ($(".education-item").length > 1) {
+        $(this).closest(".education-item").remove();
+      } else {
+        alert("You must have at least one education entry.");
+      }
+    });
+
+    // Form validation
+    $("form").on("submit", function (e) {
+      let isValid = true;
+
+      // Check required fields
+      $(".education-item").each(function () {
+        $(this)
+          .find("input[required]")
+          .each(function () {
+            if (!$(this).val().trim()) {
+              isValid = false;
+              $(this).addClass("is-invalid");
+              if (!$(this).next(".invalid-feedback").length) {
+                $(this).after(
+                  '<div class="invalid-feedback">This field is required.</div>'
+                );
+              }
+            } else {
+              $(this).removeClass("is-invalid");
+            }
+          });
+      });
+
+      return isValid;
+    });
+  });
+</script>
+{% endblock %}

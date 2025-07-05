@@ -1,0 +1,304 @@
+{% extends 'base.html' %} {% block title %}Professional Experience - AI Artisan
+Resume Builder{% endblock %} {% block progress %}
+<div class="progress-container">
+  <div class="progress" style="height: 30px">
+    <div
+      class="progress-bar bg-primary"
+      role="progressbar"
+      style="width: 87.5%"
+      aria-valuenow="87.5"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      87.5%
+    </div>
+  </div>
+  <div class="text-center mt-2">
+    <small>Step 7 of 8: Professional Experience</small>
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="form-container">
+      <h2 class="section-title">Professional Experience</h2>
+
+      <form method="post">
+        <div id="experience-container">
+          {% if data %} {% for exp in data %}
+          <div class="item-card experience-item mb-4">
+            <div class="form-group">
+              <label class="form-label required-field">Position/Title</label>
+              <input
+                type="text"
+                class="form-control"
+                name="position"
+                value="{{ exp.get('position', '') }}"
+                required
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Company</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="company"
+                    value="{{ exp.get('company', '') }}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Location</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="location"
+                    value="{{ exp.get('location', '') }}"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Start Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="start_date"
+                    value="{{ exp.get('start_date', '') }}"
+                    placeholder="Month Year"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">End Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="end_date"
+                    value="{{ exp.get('end_date', '') }}"
+                    placeholder="Month Year or Present"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"
+                >Responsibilities & Achievements (One per line)</label
+              >
+              <small class="text-muted d-block mb-2"
+                >Use action verbs and quantify impact when possible</small
+              >
+              <textarea class="form-control" name="responsibilities" rows="6">
+{{ exp.get('responsibilities', [])|join('\n') }}</textarea
+              >
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger remove-experience"
+            >
+              Remove this experience
+            </button>
+          </div>
+          {% endfor %} {% else %}
+          <div class="item-card experience-item mb-4">
+            <div class="form-group">
+              <label class="form-label required-field">Position/Title</label>
+              <input
+                type="text"
+                class="form-control"
+                name="position"
+                required
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Company</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="company"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Location</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="location"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">Start Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="start_date"
+                    placeholder="Month Year"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required-field">End Date</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="end_date"
+                    placeholder="Month Year or Present"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"
+                >Responsibilities & Achievements (One per line)</label
+              >
+              <small class="text-muted d-block mb-2"
+                >Use action verbs and quantify impact when possible</small
+              >
+              <textarea
+                class="form-control"
+                name="responsibilities"
+                rows="6"
+              ></textarea>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <button
+          type="button"
+          id="add-experience"
+          class="btn btn-outline-secondary add-item-btn"
+        >
+          <i class="bi bi-plus-circle"></i> Add Another Experience
+        </button>
+
+        <div class="action-buttons">
+          <a href="{{ url_for('projects') }}" class="btn btn-secondary">Back</a>
+          <button type="submit" class="btn btn-primary">Next</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // Add new experience
+    $("#add-experience").click(function () {
+      const newExperience = `
+                <div class="item-card experience-item mb-4">
+                    <div class="form-group">
+                        <label class="form-label required-field">Position/Title</label>
+                        <input type="text" class="form-control" name="position" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">Company</label>
+                                <input type="text" class="form-control" name="company" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">Location</label>
+                                <input type="text" class="form-control" name="location" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">Start Date</label>
+                                <input type="text" class="form-control" name="start_date" placeholder="Month Year" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required-field">End Date</label>
+                                <input type="text" class="form-control" name="end_date" placeholder="Month Year or Present" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Responsibilities & Achievements (One per line)</label>
+                        <small class="text-muted d-block mb-2">Use action verbs and quantify impact when possible</small>
+                        <textarea class="form-control" name="responsibilities" rows="6"></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-experience">Remove this experience</button>
+                </div>
+            `;
+
+      $("#experience-container").append(newExperience);
+    });
+
+    // Remove experience
+    $(document).on("click", ".remove-experience", function () {
+      if ($(".experience-item").length > 1) {
+        $(this).closest(".experience-item").remove();
+      } else {
+        alert("You must have at least one experience entry.");
+      }
+    });
+
+    // Form validation
+    $("form").on("submit", function (e) {
+      let isValid = true;
+
+      // Check required fields
+      $(".experience-item").each(function () {
+        $(this)
+          .find("[required]")
+          .each(function () {
+            if (!$(this).val().trim()) {
+              isValid = false;
+              $(this).addClass("is-invalid");
+              if (!$(this).next(".invalid-feedback").length) {
+                $(this).after(
+                  '<div class="invalid-feedback">This field is required.</div>'
+                );
+              }
+            } else {
+              $(this).removeClass("is-invalid");
+            }
+          });
+      });
+
+      return isValid;
+    });
+  });
+</script>
+{% endblock %}

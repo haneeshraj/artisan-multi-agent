@@ -1,0 +1,172 @@
+{% extends 'base.html' %} {% block title %}Personal Information - AI Artisan
+Resume Builder{% endblock %} {% block progress %}
+<div class="progress-container">
+  <div class="progress" style="height: 30px">
+    <div
+      class="progress-bar bg-primary"
+      role="progressbar"
+      style="width: 12.5%"
+      aria-valuenow="12.5"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      12.5%
+    </div>
+  </div>
+  <div class="text-center mt-2">
+    <small>Step 1 of 8: Personal Information</small>
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="form-container">
+      <h2 class="section-title">Personal Information</h2>
+
+      <form method="post">
+        <div class="form-group">
+          <label for="full_name" class="form-label required-field"
+            >Full Name</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="full_name"
+            name="full_name"
+            value="{{ data.get('full_name', '') }}"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="professional_title" class="form-label required-field"
+            >Professional Title</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="professional_title"
+            name="professional_title"
+            value="{{ data.get('professional_title', '') }}"
+            required
+          />
+          <small class="text-muted"
+            >Example: Software Engineer, Data Scientist, Project Manager</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="phone" class="form-label required-field"
+            >Phone Number</label
+          >
+          <input
+            type="tel"
+            class="form-control"
+            id="phone"
+            name="phone"
+            value="{{ data.get('phone', '') }}"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label required-field">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            value="{{ data.get('email', '') }}"
+            required
+          />
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="city" class="form-label required-field">City</label>
+              <input
+                type="text"
+                class="form-control"
+                id="city"
+                name="city"
+                value="{{ data.get('location', {}).get('city', '') }}"
+                required
+              />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="state" class="form-label required-field"
+                >State/Province</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="state"
+                name="state"
+                value="{{ data.get('location', {}).get('state', '') }}"
+                required
+              />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="country" class="form-label required-field"
+                >Country</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="country"
+                name="country"
+                value="{{ data.get('location', {}).get('country', '') }}"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+          <button type="submit" class="btn btn-primary">Next</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // Simple form validation
+    $("form").on("submit", function (e) {
+      let isValid = true;
+
+      // Check required fields
+      $("input[required]").each(function () {
+        if (!$(this).val().trim()) {
+          isValid = false;
+          $(this).addClass("is-invalid");
+        } else {
+          $(this).removeClass("is-invalid");
+        }
+      });
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailField = $("#email");
+      if (emailField.val() && !emailRegex.test(emailField.val())) {
+        isValid = false;
+        emailField.addClass("is-invalid");
+        if (!emailField.next(".invalid-feedback").length) {
+          emailField.after(
+            '<div class="invalid-feedback">Please enter a valid email address.</div>'
+          );
+        }
+      }
+
+      return isValid;
+    });
+  });
+</script>
+{% endblock %}

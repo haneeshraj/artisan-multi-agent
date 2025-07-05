@@ -1,0 +1,389 @@
+{% extends 'base.html' %} {% block title %}Additional Information - AI Artisan
+Resume Builder{% endblock %} {% block progress %}
+<div class="progress-container">
+  <div class="progress" style="height: 30px">
+    <div
+      class="progress-bar bg-primary"
+      role="progressbar"
+      style="width: 100%"
+      aria-valuenow="100"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      100%
+    </div>
+  </div>
+  <div class="text-center mt-2">
+    <small>Step 8 of 8: Additional Information</small>
+  </div>
+</div>
+{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="form-container">
+      <h2 class="section-title">Additional Information</h2>
+
+      <form method="post">
+        <div class="form-group mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+            id="has_certifications" name="has_certifications" {% if
+            data.get('certifications') %}checked{% endif %}>
+            <label class="form-check-label" for="has_certifications">
+              <h4>Certifications</h4>
+            </label>
+          </div>
+
+          <div
+            id="certifications-container"
+            class="mt-3"
+            style="{% if not data.get('certifications') %}display:none;{% endif %}"
+          >
+            {% if data.get('certifications') %} {% for cert in
+            data.get('certifications') %}
+            <div class="item-card certification-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Certification Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="cert_name"
+                      value="{{ cert.get('name', '') }}"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Issuing Organization</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="cert_issuer"
+                      value="{{ cert.get('issuer', '') }}"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Date Earned</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="cert_date"
+                      value="{{ cert.get('date', '') }}"
+                      placeholder="Month Year"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Expiration Date</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="cert_expires"
+                      value="{{ cert.get('expires', '') }}"
+                      placeholder="Month Year or No Expiration"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger remove-cert mt-2"
+              >
+                Remove
+              </button>
+            </div>
+            {% endfor %} {% endif %}
+          </div>
+
+          <button
+            type="button"
+            id="add-certification"
+            class="btn btn-sm btn-outline-secondary mt-3"
+            style="{% if not data.get('certifications') %}display:none;{% endif %}"
+          >
+            <i class="bi bi-plus-circle"></i> Add Certification
+          </button>
+        </div>
+
+        <div class="form-group mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="has_languages"
+            name="has_languages" {% if data.get('languages') %}checked{% endif
+            %}>
+            <label class="form-check-label" for="has_languages">
+              <h4>Languages Spoken</h4>
+            </label>
+          </div>
+
+          <div
+            id="languages-container"
+            class="mt-3"
+            style="{% if not data.get('languages') %}display:none;{% endif %}"
+          >
+            {% if data.get('languages') %} {% for lang in data.get('languages')
+            %}
+            <div class="item-card language-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="language"
+                      value="{{ lang.get('language', '') }}"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">Proficiency</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="language_proficiency"
+                      value="{{ lang.get('proficiency', '') }}"
+                      placeholder="e.g., Native, Fluent, Intermediate, Basic"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger remove-language mt-2"
+              >
+                Remove
+              </button>
+            </div>
+            {% endfor %} {% endif %}
+          </div>
+
+          <button
+            type="button"
+            id="add-language"
+            class="btn btn-sm btn-outline-secondary mt-3"
+            style="{% if not data.get('languages') %}display:none;{% endif %}"
+          >
+            <i class="bi bi-plus-circle"></i> Add Language
+          </button>
+        </div>
+
+        <div class="form-group mb-4">
+          <h4>Resume Focus</h4>
+          <div class="form-check">
+            <input class="form-check-input" type="radio"
+            name="is_it_professional" id="is_it_yes" value="yes" {% if not
+            data.get('industry') %}checked{% endif %}>
+            <label class="form-check-label" for="is_it_yes">
+              This resume is for an IT professional
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio"
+            name="is_it_professional" id="is_it_no" value="no" {% if
+            data.get('industry') %}checked{% endif %}>
+            <label class="form-check-label" for="is_it_no">
+              This resume is for another industry
+            </label>
+          </div>
+
+          <div
+            id="industry-container"
+            class="mt-3"
+            style="{% if not data.get('industry') %}display:none;{% endif %}"
+          >
+            <div class="form-group">
+              <label class="form-label">Specify Industry</label>
+              <input
+                type="text"
+                class="form-control"
+                name="industry"
+                value="{{ data.get('industry', '') }}"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="has_other_info"
+            name="has_other_info" {% if data.get('other') %}checked{% endif %}>
+            <label class="form-check-label" for="has_other_info">
+              <h4>Other Additional Information</h4>
+            </label>
+          </div>
+
+          <div
+            id="other-info-container"
+            class="mt-3"
+            style="{% if not data.get('other') %}display:none;{% endif %}"
+          >
+            <div class="form-group">
+              <textarea
+                class="form-control"
+                id="other_info"
+                name="other_info"
+                rows="5"
+              >
+{{ data.get('other', '') }}</textarea
+              >
+              <small class="text-muted"
+                >Any other information you'd like to include in your resume that
+                doesn't fit in the previous sections.</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <a href="{{ url_for('experience') }}" class="btn btn-secondary"
+            >Back</a
+          >
+          <button type="submit" class="btn btn-primary">Preview Resume</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  $(document).ready(function () {
+    // Toggle certifications section
+    $("#has_certifications").change(function () {
+      if ($(this).is(":checked")) {
+        $("#certifications-container").show();
+        $("#add-certification").show();
+
+        // Add an empty certification if none exist
+        if ($(".certification-item").length === 0) {
+          $("#add-certification").click();
+        }
+      } else {
+        $("#certifications-container").hide();
+        $("#add-certification").hide();
+      }
+    });
+
+    // Toggle languages section
+    $("#has_languages").change(function () {
+      if ($(this).is(":checked")) {
+        $("#languages-container").show();
+        $("#add-language").show();
+
+        // Add an empty language if none exist
+        if ($(".language-item").length === 0) {
+          $("#add-language").click();
+        }
+      } else {
+        $("#languages-container").hide();
+        $("#add-language").hide();
+      }
+    });
+
+    // Toggle industry input
+    $('input[name="is_it_professional"]').change(function () {
+      if ($("#is_it_no").is(":checked")) {
+        $("#industry-container").show();
+      } else {
+        $("#industry-container").hide();
+      }
+    });
+
+    // Toggle other info section
+    $("#has_other_info").change(function () {
+      if ($(this).is(":checked")) {
+        $("#other-info-container").show();
+      } else {
+        $("#other-info-container").hide();
+      }
+    });
+
+    // Add new certification
+    $("#add-certification").click(function () {
+      const newCertification = `
+                <div class="item-card certification-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Certification Name</label>
+                                <input type="text" class="form-control" name="cert_name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Issuing Organization</label>
+                                <input type="text" class="form-control" name="cert_issuer">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Earned</label>
+                                <input type="text" class="form-control" name="cert_date" placeholder="Month Year">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Expiration Date</label>
+                                <input type="text" class="form-control" name="cert_expires" placeholder="Month Year or No Expiration">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-cert mt-2">Remove</button>
+                </div>
+            `;
+
+      $("#certifications-container").append(newCertification);
+    });
+
+    // Add new language
+    $("#add-language").click(function () {
+      const newLanguage = `
+                <div class="item-card language-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Language</label>
+                                <input type="text" class="form-control" name="language">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Proficiency</label>
+                                <input type="text" class="form-control" name="language_proficiency" placeholder="e.g., Native, Fluent, Intermediate, Basic">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-language mt-2">Remove</button>
+                </div>
+            `;
+
+      $("#languages-container").append(newLanguage);
+    });
+
+    // Remove certification
+    $(document).on("click", ".remove-cert", function () {
+      $(this).closest(".certification-item").remove();
+    });
+
+    // Remove language
+    $(document).on("click", ".remove-language", function () {
+      $(this).closest(".language-item").remove();
+    });
+  });
+</script>
+{% endblock %}

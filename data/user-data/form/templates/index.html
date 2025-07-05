@@ -1,0 +1,51 @@
+{% extends 'base.html' %} {% block title %}Home - AI Artisan Resume Builder{%
+endblock %} {% block progress %}{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="form-container text-center">
+      <h2 class="mb-4">Welcome to the Resume Builder</h2>
+
+      <p class="lead">
+        This tool will help you create a professional resume tailored for IT
+        professionals or other industries.
+      </p>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">What You'll Need</h5>
+          <ul class="list-group list-group-flush text-start">
+            <li class="list-group-item">
+              Personal information (name, contact details)
+            </li>
+            <li class="list-group-item">
+              Online presence (LinkedIn, GitHub, portfolio links)
+            </li>
+            <li class="list-group-item">
+              Professional summary and career objectives
+            </li>
+            <li class="list-group-item">Skills and expertise</li>
+            <li class="list-group-item">Education history</li>
+            <li class="list-group-item">Project details</li>
+            <li class="list-group-item">Professional experience</li>
+            <li class="list-group-item">
+              Certifications and additional information
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <p>
+        You'll be guided through each section step by step. At the end, you'll
+        be able to preview and download your resume in both Markdown and JSON
+        formats.
+      </p>
+
+      <div class="mt-5">
+        <a href="{{ url_for('personal_info') }}" class="btn btn-primary btn-lg"
+          >Get Started</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

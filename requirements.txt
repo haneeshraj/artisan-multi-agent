@@ -1,0 +1,22 @@
+# Web scraping and automation packages
+selenium==4.15.2
+webdriver-manager==4.0.1
+beautifulsoup4==4.12.2
+requests==2.31.0
+lxml==4.9.3
+
+# Data handling and processing
+pandas==2.1.4
+numpy==1.25.2
+
+# Browser automation helpers
+undetected-chromedriver==3.5.4
+fake-useragent==1.4.0
+
+# Additional utilities
+python-dotenv==1.0.0
+
+# Web application framework
+Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
