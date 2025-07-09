@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Generator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+      .form-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 25px;
+      }
+      .section-title {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+      }
+      .dynamic-form-item {
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+      }
+      .btn-remove {
+        float: right;
+        margin-top: -5px;
+      }
+      .flash-messages {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center mb-4">Resume Profile Generator</h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
+      <form method="POST" action="{{ url_for('index') }}" id="profile-form">
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <h2 class="section-title">Personal Information</h2>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="first_name" class="form-label">First Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="first_name"
+                name="first_name"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="last_name" class="form-label">Last Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="last_name"
+                name="last_name"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Work Email *</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="phone" class="form-label">Phone Number *</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phone"
+                name="phone"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="location" class="form-label">City, Country *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="location"
+                name="location"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="role" class="form-label"
+                >Current Role/Position *</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="role"
+                name="role"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="linkedin" class="form-label">LinkedIn</label>
+              <input
+                type="url"
+                class="form-control"
+                id="linkedin"
+                name="linkedin"
+                placeholder="https://linkedin.com/in/your-profile"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="github" class="form-label">GitHub</label>
+              <input
+                type="url"
+                class="form-control"
+                id="github"
+                name="github"
+                placeholder="https://github.com/your-username"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="summary" class="form-label"
+              >Professional Summary *</label
+            >
+            <textarea
+              class="form-control"
+              id="summary"
+              name="summary"
+              rows="4"
+              required
+              placeholder="A brief summary of your background, goals, interests, and experience..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Education Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            Education <span class="text-danger">*</span>
+          </h2>
+          <div id="education-container">
+            <!-- Dynamic education items will be added here -->
+            <div class="dynamic-form-item education-item">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="edu_field_0" class="form-label"
+                    >Field of Study *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="edu_field_0"
+                    name="edu_field_0"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="edu_institute_0" class="form-label"
+                    >Institute Name *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="edu_institute_0"
+                    name="edu_institute_0"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="edu_start_0" class="form-label"
+                    >Start Date *</label
+                  >
+                  <input
+                    type="month"
+                    class="form-control"
+                    id="edu_start_0"
+                    name="edu_start_0"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="edu_end_0" class="form-label"
+                    >Graduation Date *</label
+                  >
+                  <input
+                    type="month"
+                    class="form-control"
+                    id="edu_end_0"
+                    name="edu_end_0"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="edu_count" name="edu_count" value="1" />
+          <button
+            type="button"
+            class="btn btn-secondary mt-2"
+            id="add-education"
+          >
+            Add Another Education
+          </button>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            Skills <span class="text-danger">*</span>
+          </h2>
+          <div id="skills-container">
+            <!-- Dynamic skill items will be added here -->
+            <div class="dynamic-form-item skill-item">
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="skill_category_0" class="form-label"
+                    >Category *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="skill_category_0"
+                    name="skill_category_0"
+                    placeholder="e.g., Programming Languages, Tools, etc."
+                    required
+                  />
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="skill_name_0" class="form-label"
+                    >Skill Name *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="skill_name_0"
+                    name="skill_name_0"
+                    required
+                  />
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="skill_proficiency_0" class="form-label"
+                    >Proficiency *</label
+                  >
+                  <select
+                    class="form-select"
+                    id="skill_proficiency_0"
+                    name="skill_proficiency_0"
+                    required
+                  >
+                    <option value="">Select proficiency</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="skill_count" name="skill_count" value="1" />
+          <button type="button" class="btn btn-secondary mt-2" id="add-skill">
+            Add Another Skill
+          </button>
+        </div>
+
+        <!-- Experience Section (Optional) -->
+        <div class="form-section">
+          <h2 class="section-title">
+            Experience <small class="text-muted">(Optional)</small>
+          </h2>
+          <div id="experience-container">
+            <!-- Dynamic experience items will be added here -->
+          </div>
+          <input type="hidden" id="exp_count" name="exp_count" value="0" />
+          <button
+            type="button"
+            class="btn btn-secondary mt-2"
+            id="add-experience"
+          >
+            Add Experience
+          </button>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="form-section">
+          <h2 class="section-title">
+            Projects <span class="text-danger">*</span>
+          </h2>
+          <div id="projects-container">
+            <!-- Dynamic project items will be added here -->
+            <div class="dynamic-form-item project-item">
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label for="proj_name_0" class="form-label"
+                    >Project Name *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="proj_name_0"
+                    name="proj_name_0"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="proj_start_0" class="form-label"
+                    >Start Date *</label
+                  >
+                  <input
+                    type="month"
+                    class="form-control"
+                    id="proj_start_0"
+                    name="proj_start_0"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="proj_end_0" class="form-label">End Date *</label>
+                  <input
+                    type="month"
+                    class="form-control"
+                    id="proj_end_0"
+                    name="proj_end_0"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="proj_description_0" class="form-label"
+                  >Project Description *</label
+                >
+                <textarea
+                  class="form-control"
+                  id="proj_description_0"
+                  name="proj_description_0"
+                  rows="4"
+                  required
+                  placeholder="Describe your project with 3-5 points, including responsibilities and quantitative achievements..."
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="proj_link_0" class="form-label">Project Link</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="proj_link_0"
+                  name="proj_link_0"
+                  placeholder="https://github.com/your-username/project-name"
+                />
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="proj_count" name="proj_count" value="1" />
+          <button type="button" class="btn btn-secondary mt-2" id="add-project">
+            Add Another Project
+          </button>
+        </div>
+
+        <!-- Certifications Section (Optional) -->
+        <div class="form-section">
+          <h2 class="section-title">
+            Certifications <small class="text-muted">(Optional)</small>
+          </h2>
+          <div id="certifications-container">
+            <!-- Dynamic certification items will be added here -->
+          </div>
+          <input type="hidden" id="cert_count" name="cert_count" value="0" />
+          <button
+            type="button"
+            class="btn btn-secondary mt-2"
+            id="add-certification"
+          >
+            Add Certification
+          </button>
+        </div>
+
+        <!-- Important Information Section -->
+        <div class="form-section">
+          <h2 class="section-title">Important Information</h2>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="industry" class="form-label">Industry *</label>
+              <select
+                class="form-select"
+                id="industry"
+                name="industry"
+                required
+              >
+                <option value="">Select industry</option>
+                <option value="IT">Information Technology</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Finance">Finance</option>
+                <option value="Education">Education</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Mechanical Engineering">
+                  Mechanical Engineering
+                </option>
+                <option value="Electrical Engineering">
+                  Electrical Engineering
+                </option>
+                <option value="Electronics Engineering">
+                  Electronics Engineering
+                </option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Chemical Engineering">
+                  Chemical Engineering
+                </option>
+                <option value="Aerospace Engineering">
+                  Aerospace Engineering
+                </option>
+                <option value="Biomedical Engineering">
+                  Biomedical Engineering
+                </option>
+                <option value="Environmental Engineering">
+                  Environmental Engineering
+                </option>
+                <option value="Retail">Retail</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Energy">Energy</option>
+                <option value="Telecommunications">Telecommunications</option>
+                <option value="Automotive">Automotive</option>
+                <option value="Biotechnology">Biotechnology</option>
+                <option value="Construction">Construction</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Pharmaceuticals">Pharmaceuticals</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="target_role" class="form-label"
+                >Target Role/Field *</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="target_role"
+                name="target_role"
+                required
+                placeholder="e.g., Data Analyst, AI Engineer, etc."
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <div class="row mb-5">
+            <div class="col">
+              <button type="submit" class="btn btn-primary btn-lg w-100">
+                Generate Profile
+              </button>
+            </div>
+            <div class="col-auto">
+              <button type="reset" class="btn btn-outline-danger btn-lg">
+                Clear Form
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load saved form data from local storage
+        loadSavedFormData();
+
+        // Add event listener to save form data periodically
+        const formElements = document.querySelectorAll(
+          "#profile-form input, #profile-form textarea, #profile-form select"
+        );
+        formElements.forEach((element) => {
+          element.addEventListener("change", saveFormData);
+          element.addEventListener("keyup", debounce(saveFormData, 1000));
+        });
+
+        // Experience Template
+        function getExperienceTemplate(index) {
+          return `
+                    <div class="dynamic-form-item experience-item">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove" onclick="removeItem(this, 'experience')">×</button>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="exp_position_${index}" class="form-label">Position *</label>
+                                <input type="text" class="form-control" id="exp_position_${index}" name="exp_position_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="exp_company_${index}" class="form-label">Company *</label>
+                                <input type="text" class="form-control" id="exp_company_${index}" name="exp_company_${index}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="exp_start_${index}" class="form-label">Start Date *</label>
+                                <input type="month" class="form-control" id="exp_start_${index}" name="exp_start_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="exp_end_${index}" class="form-label">End Date *</label>
+                                <input type="month" class="form-control" id="exp_end_${index}" name="exp_end_${index}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="exp_location_${index}" class="form-label">Location *</label>
+                                <input type="text" class="form-control" id="exp_location_${index}" name="exp_location_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="exp_link_${index}" class="form-label">Company Link</label>
+                                <input type="url" class="form-control" id="exp_link_${index}" name="exp_link_${index}" placeholder="https://company-website.com">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exp_responsibilities_${index}" class="form-label">Responsibilities & Achievements *</label>
+                            <textarea class="form-control" id="exp_responsibilities_${index}" name="exp_responsibilities_${index}" rows="4" required placeholder="Describe your responsibilities and achievements in 3-5 bullet points..."></textarea>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Certification Template
+        function getCertificationTemplate(index) {
+          return `
+                    <div class="dynamic-form-item certification-item">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove" onclick="removeItem(this, 'certification')">×</button>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cert_name_${index}" class="form-label">Certification Name *</label>
+                                <input type="text" class="form-control" id="cert_name_${index}" name="cert_name_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cert_company_${index}" class="form-label">Issuing Organization *</label>
+                                <input type="text" class="form-control" id="cert_company_${index}" name="cert_company_${index}" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Education Template for adding more
+        function getEducationTemplate(index) {
+          return `
+                    <div class="dynamic-form-item education-item">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove" onclick="removeItem(this, 'education')">×</button>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edu_field_${index}" class="form-label">Field of Study *</label>
+                                <input type="text" class="form-control" id="edu_field_${index}" name="edu_field_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edu_institute_${index}" class="form-label">Institute Name *</label>
+                                <input type="text" class="form-control" id="edu_institute_${index}" name="edu_institute_${index}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edu_start_${index}" class="form-label">Start Date *</label>
+                                <input type="month" class="form-control" id="edu_start_${index}" name="edu_start_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edu_end_${index}" class="form-label">Graduation Date *</label>
+                                <input type="month" class="form-control" id="edu_end_${index}" name="edu_end_${index}" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Skill Template for adding more
+        function getSkillTemplate(index) {
+          return `
+                    <div class="dynamic-form-item skill-item">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove" onclick="removeItem(this, 'skill')">×</button>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="skill_category_${index}" class="form-label">Category *</label>
+                                <input type="text" class="form-control" id="skill_category_${index}" name="skill_category_${index}" placeholder="e.g., Programming Languages, Tools, etc." required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="skill_name_${index}" class="form-label">Skill Name *</label>
+                                <input type="text" class="form-control" id="skill_name_${index}" name="skill_name_${index}" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="skill_proficiency_${index}" class="form-label">Proficiency *</label>
+                                <select class="form-select" id="skill_proficiency_${index}" name="skill_proficiency_${index}" required>
+                                    <option value="">Select proficiency</option>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Expert">Expert</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Project Template for adding more
+        function getProjectTemplate(index) {
+          return `
+                    <div class="dynamic-form-item project-item">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove" onclick="removeItem(this, 'project')">×</button>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="proj_name_${index}" class="form-label">Project Name *</label>
+                                <input type="text" class="form-control" id="proj_name_${index}" name="proj_name_${index}" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="proj_start_${index}" class="form-label">Start Date *</label>
+                                <input type="month" class="form-control" id="proj_start_${index}" name="proj_start_${index}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="proj_end_${index}" class="form-label">End Date *</label>
+                                <input type="month" class="form-control" id="proj_end_${index}" name="proj_end_${index}" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="proj_description_${index}" class="form-label">Project Description *</label>
+                            <textarea class="form-control" id="proj_description_${index}" name="proj_description_${index}" rows="4" required placeholder="Describe your project with 3-5 points, including responsibilities and quantitative achievements..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="proj_link_${index}" class="form-label">Project Link</label>
+                            <input type="url" class="form-control" id="proj_link_${index}" name="proj_link_${index}" placeholder="https://github.com/your-username/project-name">
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Add remove item functionality to global scope
+        window.removeItem = function (button, type) {
+          const container = button.closest(`.dynamic-form-item`);
+          container.remove();
+
+          // Update counter
+          const counterField = document.getElementById(
+            `${type.slice(0, 4)}_count`
+          );
+          counterField.value = parseInt(counterField.value) - 1;
+
+          // Reindex the remaining items
+          reindexItems(type);
+        };
+
+        function reindexItems(type) {
+          // Get the appropriate prefix (exp_, cert_, edu_, etc.)
+          const prefix = type.slice(0, 4);
+
+          // Get all items of this type
+          const items = document.querySelectorAll(`.${type}-item`);
+
+          // Update the counter
+          document.getElementById(`${prefix}_count`).value = items.length;
+        }
+
+        // Add event listeners for the "Add" buttons
+        document
+          .getElementById("add-experience")
+          .addEventListener("click", function () {
+            let count = parseInt(document.getElementById("exp_count").value);
+            document
+              .getElementById("experience-container")
+              .insertAdjacentHTML("beforeend", getExperienceTemplate(count));
+            document.getElementById("exp_count").value = count + 1;
+          });
+
+        document
+          .getElementById("add-certification")
+          .addEventListener("click", function () {
+            let count = parseInt(document.getElementById("cert_count").value);
+            document
+              .getElementById("certifications-container")
+              .insertAdjacentHTML("beforeend", getCertificationTemplate(count));
+            document.getElementById("cert_count").value = count + 1;
+          });
+
+        document
+          .getElementById("add-education")
+          .addEventListener("click", function () {
+            let count = parseInt(document.getElementById("edu_count").value);
+            document
+              .getElementById("education-container")
+              .insertAdjacentHTML("beforeend", getEducationTemplate(count));
+            document.getElementById("edu_count").value = count + 1;
+          });
+
+        document
+          .getElementById("add-skill")
+          .addEventListener("click", function () {
+            let count = parseInt(document.getElementById("skill_count").value);
+            document
+              .getElementById("skills-container")
+              .insertAdjacentHTML("beforeend", getSkillTemplate(count));
+            document.getElementById("skill_count").value = count + 1;
+          });
+
+        document
+          .getElementById("add-project")
+          .addEventListener("click", function () {
+            let count = parseInt(document.getElementById("proj_count").value);
+            document
+              .getElementById("projects-container")
+              .insertAdjacentHTML("beforeend", getProjectTemplate(count));
+            document.getElementById("proj_count").value = count + 1;
+          });
+
+        // Add remove button to the first education item
+        const firstEducation = document.querySelector(".education-item");
+        if (
+          firstEducation &&
+          document.querySelectorAll(".education-item").length === 1
+        ) {
+          // Don't add remove button to the first education item since it's required
+        }
+
+        // Add remove button to the first skill item
+        const firstSkill = document.querySelector(".skill-item");
+        if (
+          firstSkill &&
+          document.querySelectorAll(".skill-item").length === 1
+        ) {
+          // Don't add remove button to the first skill item since it's required
+        }
+
+        // Add remove button to the first project item
+        const firstProject = document.querySelector(".project-item");
+        if (
+          firstProject &&
+          document.querySelectorAll(".project-item").length === 1
+        ) {
+          // Don't add remove button to the first project item since it's required
+        }
+
+        // Initialize dynamic sections based on loaded data
+        initializeDynamicSections();
+      });
+
+      // Function to save form data to local storage
+      function saveFormData() {
+        const formData = {};
+
+        // Save basic fields
+        document
+          .querySelectorAll(
+            "#profile-form input, #profile-form textarea, #profile-form select"
+          )
+          .forEach((element) => {
+            // Skip buttons and hidden fields for counts
+            if (
+              element.type !== "button" &&
+              element.type !== "submit" &&
+              !element.id.endsWith("_count")
+            ) {
+              formData[element.id] = element.value;
+            }
+          });
+
+        // Save current form structure (number of each dynamic section)
+        formData["cert_count"] = document.getElementById("cert_count").value;
+        formData["edu_count"] = document.getElementById("edu_count").value;
+        formData["skill_count"] = document.getElementById("skill_count").value;
+        formData["exp_count"] = document.getElementById("exp_count").value;
+        formData["proj_count"] = document.getElementById("proj_count").value;
+
+        // Save to local storage
+        localStorage.setItem(
+          "artisan_profile_form_data",
+          JSON.stringify(formData)
+        );
+      }
+
+      // Function to load saved form data
+      function loadSavedFormData() {
+        const savedData = localStorage.getItem("artisan_profile_form_data");
+        if (!savedData) return;
+
+        const formData = JSON.parse(savedData);
+
+        // Fill in basic fields first
+        Object.keys(formData).forEach((key) => {
+          const element = document.getElementById(key);
+          if (
+            element &&
+            key !== "cert_count" &&
+            key !== "edu_count" &&
+            key !== "skill_count" &&
+            key !== "exp_count" &&
+            key !== "proj_count"
+          ) {
+            element.value = formData[key];
+          }
+        });
+      }
+
+      // Initialize dynamic sections based on saved counts
+      function initializeDynamicSections() {
+        const savedData = localStorage.getItem("artisan_profile_form_data");
+        if (!savedData) return;
+
+        const formData = JSON.parse(savedData);
+
+        // Add dynamic certifications
+        if (formData["cert_count"] && parseInt(formData["cert_count"]) > 0) {
+          const certCount = parseInt(formData["cert_count"]);
+          for (let i = 0; i < certCount; i++) {
+            if (i > 0) {
+              // Skip first one if it already exists by default
+              document.getElementById("add-certification").click();
+            }
+          }
+        }
+
+        // Add dynamic education entries
+        if (formData["edu_count"] && parseInt(formData["edu_count"]) > 1) {
+          const eduCount = parseInt(formData["edu_count"]);
+          for (let i = 1; i < eduCount; i++) {
+            // Start at 1 since we already have one by default
+            document.getElementById("add-education").click();
+          }
+        }
+
+        // Add dynamic skills
+        if (formData["skill_count"] && parseInt(formData["skill_count"]) > 1) {
+          const skillCount = parseInt(formData["skill_count"]);
+          for (let i = 1; i < skillCount; i++) {
+            // Start at 1 since we already have one by default
+            document.getElementById("add-skill").click();
+          }
+        }
+
+        // Add dynamic experience
+        if (formData["exp_count"] && parseInt(formData["exp_count"]) > 0) {
+          const expCount = parseInt(formData["exp_count"]);
+          for (let i = 0; i < expCount; i++) {
+            document.getElementById("add-experience").click();
+          }
+        }
+
+        // Add dynamic projects
+        if (formData["proj_count"] && parseInt(formData["proj_count"]) > 1) {
+          const projCount = parseInt(formData["proj_count"]);
+          for (let i = 1; i < projCount; i++) {
+            // Start at 1 since we already have one by default
+            document.getElementById("add-project").click();
+          }
+        }
+
+        // After creating all the dynamic sections, fill in all fields again
+        setTimeout(() => {
+          const formData = JSON.parse(savedData);
+          Object.keys(formData).forEach((key) => {
+            const element = document.getElementById(key);
+            if (element) {
+              element.value = formData[key];
+            }
+          });
+        }, 500); // Small delay to ensure elements are created
+      }
+
+      // Add form reset handler with confirmation
+      document
+        .getElementById("profile-form")
+        .addEventListener("reset", function (e) {
+          if (
+            confirm(
+              "This will clear all form data including saved data. Are you sure?"
+            )
+          ) {
+            localStorage.removeItem("artisan_profile_form_data");
+          } else {
+            e.preventDefault();
+          }
+        });
+
+      // Debounce function to limit how often a function is called
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+    </script>
+  </body>
+</html>

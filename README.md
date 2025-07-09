@@ -86,17 +86,82 @@ A YAML-based configuration controls:
 ```
 ai-artisan/
 ├── data/
-│   ├── processed-data/      # Normalized and processed data
-│   ├── scraped-data/        # Raw job listings from various platforms
-│   └── user-data/           # User profile information
-│       └── form/            # Flask web application for profile data collection
-├── scraper/                 # Job listing scrapers for different platforms
-└── artisan-builder.py       # Main integration script (in development)
+│   ├── processed-data/          # Normalized and processed data
+│   │   ├── json/                # Processed job listings in JSON format
+│   │   └── md/                  # Processed job listings in Markdown format
+│   ├── scraped-data/            # Raw job listings from various platforms
+│   │   ├── raw-json/            # Raw job listings in JSON format
+│   │   └── raw-md/              # Raw job listings in Markdown format
+│   ├── profile-data/            # User profile information
+│       ├── gen/                 # Profile generator web application
+│       │   ├── templates/       # HTML templates for the profile form
+│       │   └── profile-gen.py   # Flask application for profile collection
+│       └── profiles/            # User profile storage
+│           ├── json/            # Profiles in JSON format
+│           └── md/              # Profiles in Markdown format
+├── llm/                         # LLM integration modules
+│   ├── llm.py                   # Core LLM utility functions
+│   └── content-gen.py           # Resume content generation
+├── scraper/                     # Job listing scrapers for different platforms
+│   ├── glassdoor_scraper.py     # Glassdoor job scraper
+│   ├── indeed_scraper.py        # Indeed job scraper
+│   ├── linkedin_scraper.py      # LinkedIn job scraper
+│   ├── readerapi_scraper.py     # Generic web scraper via Reader API
+│   └── selenium_driver.py       # Selenium utilities for scraping
+├── config.yaml                  # Configuration for LLM models and other settings
+└── artisan-builder.py           # Main integration script
 ```
 
 ## Current Status
 
-The project is under active development with the following components available:
+The project is under active development with the following components implemented:
+
+### ✅ Job Scraping System
+
+- **Multi-platform job scrapers** for LinkedIn, Indeed, and Glassdoor
+- **Generic web scraping** capability via Reader API
+- **Selenium-based extraction** with advanced stealth and anti-detection features
+- **Structured data extraction** with consistent JSON and Markdown output formats
+
+### ✅ User Profile Management
+
+- **Interactive web form** for collecting comprehensive user profile data
+- **Dynamic form sections** for education, experience, skills, projects, and certifications
+- **Form state persistence** using localStorage for seamless user experience
+- **JSON and Markdown output** for integration with resume generation process
+- **Support for multiple industries** including various engineering disciplines
+
+### ✅ Core Infrastructure
+
+- **Command-line interface** with robust argument parsing and validation
+- **Configuration system** using YAML for model selection and other settings
+- **LLM integration** with support for multiple models and customization options
+- **Error handling and logging** for reliable operation
+
+### 🔄 In Progress
+
+- Resume content generation using LLMs
+- Resume evaluation and scoring system
+- Python script generation for document creation
+- Final document building and export
+
+### 📋 Usage Instructions
+
+#### Profile Generation
+
+```bash
+pip install -r requirements.txt
+cd data/profile-data/gen
+python profile-gen.py
+```
+
+Then open your browser to http://127.0.0.1:5000 to access the profile form.
+
+#### Job Scraping and Resume Generation
+
+```bash
+python artisan-builder.py --url "JOB_POSTING_URL" --profile "your_profile.json" --content-gen-model "gpt-4.1-mini" --evaluation-model "claude-3-opus" --code-gen-model "gemini-2.5-pro" --output-format pdf
+```
 
 - Job scraping modules for major platforms
 - User profile data collection web form

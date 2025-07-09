@@ -157,7 +157,12 @@ def main():
         ( output_file, output_md_file ) = scrape_url(args.url, args)
         print("URL scraping completed successfully.")
 
+
+        profile_dir = os.path.join('data', 'profile-data', 'profiles')
+        profile_path = os.path.join(profile_dir, args.profile)
+
         
+
 
 
 

@@ -4,6 +4,7 @@ webdriver-manager==4.0.1
 beautifulsoup4==4.12.2
 requests==2.31.0
 lxml==4.9.3
+pyyaml>=6.0
 
 # Data handling and processing
 pandas==2.1.4

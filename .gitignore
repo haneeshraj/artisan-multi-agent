@@ -104,8 +104,8 @@ data/scraped-data/raw-md/*.md
 data/processed-data/json/*.json
 data/processed-data/md/*.md
 # Uncomment the following line if you want to ignore user profiles
-data/user-data/profiles/json/*.json
-data/user-data/profiles/md/*.md
+data/profile-data/profiles/json/*.json
+data/profile-data/profiles/md/*.md
 # Idea markdown files
 idea-techical.md
 idea-summary.md
