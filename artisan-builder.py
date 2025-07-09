@@ -111,21 +111,70 @@ def validate_arguments(args):
     print("All arguments are valid.")
 
 
+def scrape_url(url, args):
 
-    
+    try:
+        if "linkedin" in url:
+            if args.url.startswith("https://www.linkedin.com/jobs/view/"):
+                from scraper.linkedin_scraper import scrape_linkedin_job
+                return scrape_linkedin_job(args.url)
+            else:
+                raise ValueError("Invalid LinkedIn job URL. Please provide a valid LinkedIn job URL starting with 'https://www.linkedin.com/jobs/view/'.")
+            
+        elif "indeed" in url:
+            if "indeed.com/viewjob?jk=" in url:
+                from scraper.indeed_scraper import scrape_indeed_job
+                return scrape_indeed_job(args.url)
+            else:
+                raise ValueError("Invalid Indeed job URL. Please provide a valid Indeed job URL starting with 'https://www.indeed.com/viewjob?jk='.")
+        elif "glassdoor" in url:
+            if "/job-listing/" in url:
+                from scraper.glassdoor_scraper import scrape_glassdoor_job
+                return scrape_glassdoor_job(args.url)
+            else:
+                raise ValueError("Invalid Glassdoor job URL. Please provide a valid Glassdoor job URL containing '/job-listing/'.")
+        elif url not in ["linkedin", "indeed", "glassdoor"]:
+            from scraper.readerapi_scraper import scrape_with_readerapi
+            return scrape_with_readerapi(args.url)
+        else:
+            raise ValueError("Unsupported job site. Please provide a valid LinkedIn, Indeed, or Glassdoor job URL.")
+    except Exception as e:
+        print(f"Error scraping URL: {e}")
+        raise 
+
 
 def main():
+    try:
+        config = load_config()
+        args = parse_arguments()
 
-    config = load_config()
-    args = parse_arguments()
+        validate_arguments(args)
 
-    validate_arguments(args)
-    
+        print(f"Configuration loaded successfully: {config}")
+        print(f"Arguments parsed successfully: {args}")
+
+        # Scrape the URL provided in the arguments
+        ( output_file, output_md_file ) = scrape_url(args.url, args)
+        print("URL scraping completed successfully.")
+
+        
+
+
+
+
+
+
+    except Exception as e:
+        print(f"Error: {e}")
+
    
-    # python artisan-builder.py --url "https://example.com" --profile "user_profile.json" --content-gen-model "gpt-3.5-turbo" --evaluation-model "gpt-4" --code-gen-model "gpt-4.1-nano" --output-format "docx" --content-iter 5
-
     
 
 if __name__ == "__main__":
     main()
     
+
+    #test command with link 
+
+#     # Example usage:
+#     # python artisan-builder.py --url "https://careers.hootsuite.com/job/?gh_jid=6978679" --profile "my-profile.json" --content-gen-model "gpt-4.1-mini" --evaluation-model "claude-3-opus" --code-gen-model "gemini-2.5-pro" --output-format pdf --content-iter 3 

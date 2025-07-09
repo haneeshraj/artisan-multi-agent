@@ -1,7 +1,9 @@
 from selenium.webdriver.common.by import By
-from selenium_driver import SeleniumDriver
+from scraper.selenium_driver import SeleniumDriver
 import time
 from datetime import datetime
+import os
+import json
 
 
 def scrape_glassdoor_job(url):

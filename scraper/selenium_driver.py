@@ -14,6 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import os
 from webdriver_manager.chrome import ChromeDriverManager
 from fake_useragent import UserAgent
 import undetected_chromedriver as uc
@@ -27,7 +28,7 @@ class SeleniumDriver:
     
     def __init__(self, 
                  headless: bool = False,
-                 stealth_mode: bool = True,
+                 stealth_mode: bool = False,  # Disabled by default now
                  window_size: str = "1920,1080",
                  timeout: int = 10,
                  page_load_timeout: int = 30,
@@ -37,14 +38,14 @@ class SeleniumDriver:
         
         Args:
             headless: Run browser in headless mode
-            stealth_mode: Use undetected-chromedriver for better stealth
+            stealth_mode: (Deprecated) Not currently used
             window_size: Browser window size as "width,height"
             timeout: Default wait timeout for elements
             page_load_timeout: Page load timeout
             custom_user_agent: Custom user agent string
         """
         self.headless = headless
-        self.stealth_mode = stealth_mode
+        self.stealth_mode = False  # Force to False for now
         self.window_size = window_size
         self.timeout = timeout
         self.page_load_timeout = page_load_timeout
@@ -58,7 +59,7 @@ class SeleniumDriver:
         
         # Basic options
         if self.headless:
-            options.add_argument("--headless")
+            options.add_argument("--headless=new")  # Updated headless syntax
         
         options.add_argument(f"--window-size={self.window_size}")
         options.add_argument("--no-sandbox")
@@ -72,33 +73,57 @@ class SeleniumDriver:
         # Performance options
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-plugins")
-        options.add_argument("--disable-images")
-        options.add_argument("--disable-javascript")  # Remove if JS is needed
         
-        # User agent
+        # IMPORTANT: LinkedIn requires JavaScript and images
+        # options.add_argument("--disable-images")
+        # options.add_argument("--disable-javascript")  # Disabled - needed for LinkedIn
+        
+        # User agent - Using a hardcoded modern user agent instead of fake-useragent
+        modern_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
         if self.custom_user_agent:
             options.add_argument(f"--user-agent={self.custom_user_agent}")
         else:
-            ua = UserAgent()
-            options.add_argument(f"--user-agent={ua.random}")
+            options.add_argument(f"--user-agent={modern_user_agent}")
         
         return options
     
     def start_driver(self) -> webdriver.Chrome:
         """Start and configure the Chrome WebDriver."""
         try:
-            if self.stealth_mode:
-                # Use undetected-chromedriver for better stealth
-                options = uc.ChromeOptions()
-                if self.headless:
-                    options.add_argument("--headless")
+            # Temporarily disable stealth mode and use regular ChromeDriver
+            # as there seems to be issues with undetected_chromedriver
+            options = self._get_chrome_options()
+            
+            # Explicitly install ChromeDriver using webdriver_manager
+            try:
+                chrome_driver_path = ChromeDriverManager().install()
+                # Fix path if it's pointing to THIRD_PARTY_NOTICES instead of chromedriver.exe
+                if "THIRD_PARTY_NOTICES" in chrome_driver_path:
+                    chrome_driver_dir = os.path.dirname(chrome_driver_path)
+                    chrome_driver_path = os.path.join(chrome_driver_dir, "chromedriver.exe")
                 
-                self.driver = uc.Chrome(options=options)
-            else:
-                # Use regular ChromeDriver
-                options = self._get_chrome_options()
-                service = Service(ChromeDriverManager().install())
-                self.driver = webdriver.Chrome(service=service, options=options)
+                print(f"Using ChromeDriver from: {chrome_driver_path}")
+                
+                # Check if the file exists
+                import os
+                if not os.path.exists(chrome_driver_path):
+                    print(f"⚠️ ChromeDriver not found at {chrome_driver_path}")
+                    # Try to find chromedriver.exe in the directory
+                    chrome_driver_dir = os.path.dirname(chrome_driver_path)
+                    for file in os.listdir(chrome_driver_dir):
+                        if "chromedriver" in file.lower() and file.endswith(".exe"):
+                            chrome_driver_path = os.path.join(chrome_driver_dir, file)
+                            print(f"✅ Found ChromeDriver at: {chrome_driver_path}")
+                            break
+            except Exception as e:
+                print(f"⚠️ Error finding ChromeDriver: {str(e)}")
+                print("Attempting to use direct WebDriver installation...")
+                # Direct Chrome instantiation without service
+                self.driver = webdriver.Chrome(options=options)
+                return self.driver
+                
+            service = Service(chrome_driver_path)
+            self.driver = webdriver.Chrome(service=service, options=options)
             
             # Configure timeouts
             self.driver.set_page_load_timeout(self.page_load_timeout)

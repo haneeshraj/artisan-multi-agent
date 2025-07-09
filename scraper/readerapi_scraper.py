@@ -9,13 +9,12 @@ from datetime import datetime
 dotenv.load_dotenv()
 
 
-def scrape_with_readerapi(target_url, api_key):
+def scrape_with_readerapi(target_url, ):
     """
     Scrape website content using JinaAI's ReaderAPI.
     
     Args:
         target_url (str): The URL of the webpage to scrape.
-        api_key (str): Your JinaAI ReaderAPI key.
     
     Returns:
         tuple: A tuple containing the paths of the saved JSON and Markdown files.
@@ -27,6 +26,8 @@ def scrape_with_readerapi(target_url, api_key):
     import urllib.parse
     encoded_url = urllib.parse.quote_plus(target_url)
     reader_url = f'https://r.jina.ai/{encoded_url}'
+
+    api_key = os.getenv('READER_API_KEY')
     
     # Set up the headers with your API key
     headers = {
