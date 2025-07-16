@@ -4,8 +4,10 @@ import yaml
 import os
 import re
 
+from utils.md_parser import parse_code_from_md
+
 from llm.llm import query
-from llm.agent.content_gen import generate_resume_content
+from llm.agent.content_gen import generate_resume_content, generate_resume_content_with_eval
 from llm.agent.eval import eval_content
 
 def load_config():
@@ -146,6 +148,8 @@ def scrape_url(url, args):
         raise 
 
 
+
+
 def main():
     try:
         config = load_config()
@@ -250,75 +254,100 @@ def main():
         
         # generate and eval and regenerate based on feedback on eval based on cfg's improv-rate value
         print(f"Starting iterative resume generation with {improve_rate} improvement iterations...")
-        for i in range(improve_rate):
-            print(f"\n--- Starting Iteration {i+1}/{improve_rate} ---")
-            for j in range(cfg['agent']['content-gen']['iter']):
-              if i == 0:
-                print(f"Generating resume content with strategy {j+1}/{cfg['agent']['content-gen']['iter']}: {strategies[j][:50]}...")
-                resume_content = generate_resume_content(
-                    job_details=job_details_md,
-                    profile=profile_file,
-                    strategy=strategies[j],
-                    cfg=cfg
-                )
-                
-                # Convert response to string and handle None values
-                if resume_content is None:
-                    print(f"Warning: No content generated for strategy {j+1}")
-                    resume_content = f"# Resume Generation Failed\n\nNo content was generated for strategy {j+1}."
-                else:
-                    resume_content = str(resume_content)
-                
-                # write the response as a file in the job_resumes_dir with the name resume_content_{j+1}.md          
-                resume_file = os.path.join(job_resumes_dir, f'version{i}', f'resume_content_{j+1}.md')
-                os.makedirs(os.path.dirname(resume_file), exist_ok=True)
-                with open(resume_file, 'w', encoding='utf-8') as f:
-                    f.write(resume_content.strip())
-                print(f"✓ Strategy {j+1} resume saved to {resume_file}")
-                    
-              else:
-                # read the resume content from the previous version and generate new content based on the eval response
-                resume_file = os.path.join(job_resumes_dir, f'version{i-1}', f'resume_content_{j+1}.md')
-                if not os.path.exists(resume_file):
-                    print(f"⚠️  Resume file {resume_file} does not exist. Skipping iteration {i+1}, strategy {j+1}.")
-                    continue
-                with open(resume_file, 'r', encoding='utf-8') as f:
-                    previous_resume_content = f.read().strip()
-                print(f"Generating improved resume content for strategy {j+1} based on previous version {i}")
-                
-                # TODO: Add resume regeneration logic here using eval feedback
-                    
-            all_resume_content = []
-            for j in range(cfg['agent']['content-gen']['iter']):
-                resume_file = os.path.join(job_resumes_dir, f'version{i}', f'resume_content_{j+1}.md')
-                if os.path.exists(resume_file):
-                    with open(resume_file, 'r', encoding='utf-8') as f:
-                        all_resume_content.append(f.read().strip())
+        
+        iteration = 0
+        
+        while True:
+            print(f"Creating initial resume content with strategies")
+            # create version n dir for  resume content
+            version_dir = os.path.join(job_resumes_dir, f'version_{iteration}')
+            os.makedirs(version_dir, exist_ok=True)
             
-            # Join all the resumes with strategy-specific headers for better evaluation context
-            all_resume_content_joined = "\n\n".join([
-                f"**Strategy {j+1} Resume Version:**\n\n{content}"
-                for j, content in enumerate(all_resume_content)
-            ])
+            if iteration == 0:
+                # Generate initial resume content
+                for j in range(cfg["agent"]["content-gen"]["iter"]):
+                    strategy = strategies[j]
+                    resume_content = generate_resume_content(cfg=cfg, strategy=strategy, job_details=job_details_md, profile=profile_file)
+                    if resume_content is None or not resume_content.strip():
+                        raise ValueError("No content generated for the resume. Please check the content generation step.")
+                    
+                    processed_content = parse_code_from_md(resume_content)
+                    if processed_content is None:
+                        raise ValueError("No code blocks found in the resume content. Please check the content generation step.")
+                    
+                    resume_file = os.path.join(version_dir, f'resume_{j+1}.md')
+                    with open(resume_file, 'w', encoding='utf-8') as f:
+                        f.write(resume_content.strip())
+                        
+            if iteration > 0:
+                # Generate improved resume content based on previous content and evaluation feedback
+                    for j in range(cfg["agent"]["content-gen"]["iter"]):
+                        strategy = strategies[j]
+                        # get previous resume content
+                        previous_resume_file = os.path.join(job_resumes_dir, f'version_{iteration-1}', f'resume_{j+1}.md')
+                        if not os.path.exists(previous_resume_file):    
+                            raise FileNotFoundError(f"Previous resume file '{previous_resume_file}' does not exist. Cannot generate improved content.")
+                        with open(previous_resume_file, 'r', encoding='utf-8') as f:
+                            previous_resume_content = f.read().strip()
+                            
+                        resume_content = generate_resume_content_with_eval(
+                            cfg=cfg, 
+                            strategy=strategy, 
+                            job_details=job_details_md, 
+                            profile=profile_file, 
+                            previous_content=previous_resume_content
+                        )
+                        
+                        if resume_content is None or not resume_content.strip():
+                            raise ValueError("No content generated for the resume. Please check the content generation step.")
+                        
+                        processed_content = parse_code_from_md(resume_content)
+                        if processed_content is None:
+                            raise ValueError("No code blocks found in the resume content. Please check the content generation step.")
+                        
+                        resume_file = os.path.join(version_dir, f'resume_{j+1}.md')
+                        with open(resume_file, 'w', encoding='utf-8') as f:
+                            f.write(resume_content.strip())
+            
+            print(f"Resume content generated for version {iteration}.")
+            
+            # combine all resume content into a single string
+            combined_resume_content = ""
+            for j in range(cfg["agent"]["content-gen"]["iter"]):
+                resume_file = os.path.join(version_dir, f'resume_{j+1}.md')
+                with open(resume_file, 'r', encoding='utf-8') as f:
+                    content = f.read().strip()
+                    combined_resume_content += f"### Resume {j+1}\n\n{content}\n\n"
+                    
+            # Evaluate the resume content
+            print(f"Evaluating resume content for version {iteration}...")
             
             eval_response = eval_content(
-                cfg=cfg,
+                resumes=combined_resume_content,
                 job_details=job_details_md,
-                resume=all_resume_content_joined
+                profile=profile_file,
+                cfg=cfg
             )
             
-            # write the eval response to a file in the job_resumes_dir inside version{i} with the name eval_response.md
-            eval_file = os.path.join(job_resumes_dir, f'version{i}', 'eval_response.md')
-            os.makedirs(os.path.dirname(eval_file), exist_ok=True)
+            if eval_response is None or not eval_response.strip():
+                raise ValueError("No evaluation response received from the LLM. Please check the evaluation model and configuration.")
+            eval_file = os.path.join(version_dir, 'evaluation.md')
             with open(eval_file, 'w', encoding='utf-8') as f:
                 f.write(eval_response.strip())
+            print(f"Evaluation results written to {eval_file}")
             
-            # Log iteration completion with proper scope
-            print(f"Iteration {i+1} completed. All {len(all_resume_content)} resume versions generated and evaluated.")
+            iteration += 1
+            
+            if iteration >= improve_rate:
+                print(f"Reached the maximum improvement iterations: {improve_rate}. Stopping further iterations.")
+                break
+            
             
 
-            pass
-
+            
+                
+                
+             
          
 
     except Exception as e:
