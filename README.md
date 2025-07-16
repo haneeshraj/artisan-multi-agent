@@ -86,13 +86,20 @@ A YAML-based configuration controls:
 ```
 ai-artisan/
 ├── data/
-│   ├── processed-data/          # Normalized and processed data
-│   │   ├── json/                # Processed job listings in JSON format
-│   │   └── md/                  # Processed job listings in Markdown format
+│   ├── job-data/                # Generated resume content and evaluations per job
+│   │   └── [job_title_timestamp]/
+│   │       ├── strategies.md    # AI-generated resume strategies
+│   │       ├── version_0/       # Initial resume generation
+│   │       │   ├── resume_1.md  # Strategy 1 resume
+│   │       │   ├── resume_2.md  # Strategy 2 resume
+│   │       │   ├── ...
+│   │       │   └── evaluation.md # Comprehensive evaluation results
+│   │       ├── version_1/       # Improved iteration
+│   │       └── version_2/       # Further improvements
 │   ├── scraped-data/            # Raw job listings from various platforms
 │   │   ├── raw-json/            # Raw job listings in JSON format
 │   │   └── raw-md/              # Raw job listings in Markdown format
-│   ├── profile-data/            # User profile information
+│   └── profile-data/            # User profile information
 │       ├── gen/                 # Profile generator web application
 │       │   ├── templates/       # HTML templates for the profile form
 │       │   └── profile-gen.py   # Flask application for profile collection
@@ -101,20 +108,25 @@ ai-artisan/
 │           └── md/              # Profiles in Markdown format
 ├── llm/                         # LLM integration modules
 │   ├── llm.py                   # Core LLM utility functions
-│   └── content-gen.py           # Resume content generation
+│   └── agent/                   # Specialized AI agents
+│       ├── content_gen.py       # Resume content generation agents
+│       └── eval.py              # Resume evaluation agent
 ├── scraper/                     # Job listing scrapers for different platforms
 │   ├── glassdoor_scraper.py     # Glassdoor job scraper
 │   ├── indeed_scraper.py        # Indeed job scraper
 │   ├── linkedin_scraper.py      # LinkedIn job scraper
 │   ├── readerapi_scraper.py     # Generic web scraper via Reader API
 │   └── selenium_driver.py       # Selenium utilities for scraping
+├── utils/                       # Utility functions
+│   ├── md_parser.py             # Markdown parsing utilities
+│   └── md-json.py               # JSON conversion utilities
 ├── config.yaml                  # Configuration for LLM models and other settings
 └── artisan-builder.py           # Main integration script
 ```
 
 ## Current Status
 
-The project is under active development with the following components implemented:
+The project has reached a significant milestone with a **fully functional AI-powered resume generation and evaluation system**. The core pipeline is operational and can successfully create, evaluate, and iteratively improve multiple resume versions tailored to specific job postings.
 
 ### ✅ Job Scraping System
 
@@ -138,12 +150,36 @@ The project is under active development with the following components implemente
 - **LLM integration** with support for multiple models and customization options
 - **Error handling and logging** for reliable operation
 
+### ✅ AI-Powered Resume Generation
+
+- **Strategy Generation System** that analyzes job descriptions and creates diverse resume-tailoring strategies
+- **Multi-Agent Content Generation** with specialized agents for different resume approaches
+- **LLM-powered resume content creation** using models like GPT-4, Claude, and Gemini
+- **Content validation and parsing** with Markdown code block extraction
+- **Multiple resume iterations** per job posting with different strategic focuses
+
+### ✅ Intelligent Evaluation System
+
+- **Comprehensive resume evaluation** using AI agents with structured scoring rubrics
+- **ATS Compatibility Analysis** (0-100 scoring) for resume parsing optimization
+- **Structure Assessment** (0-100 scoring) for professional layout and organization
+- **Job Keyword Matching** (0-100 scoring) for alignment with job requirements
+- **Detailed feedback generation** with actionable improvement suggestions
+- **Multi-resume comparative analysis** with ranking and average score calculations
+
+### ✅ Iterative Improvement Pipeline
+
+- **Version-controlled resume generation** with organized file structures
+- **Feedback-driven improvement cycles** using evaluation results to enhance subsequent versions
+- **Strategy-based content refinement** that maintains focus while addressing evaluation feedback
+- **Automated iteration management** with configurable improvement rounds
+- **Complete audit trail** of all generated content, evaluations, and improvements
+
 ### 🔄 In Progress
 
-- Resume content generation using LLMs
-- Resume evaluation and scoring system
 - Python script generation for document creation
-- Final document building and export
+- Final document building and export (Word/PDF)
+- Enhanced ATS optimization features
 
 ### 📋 Usage Instructions
 
@@ -160,20 +196,74 @@ Then open your browser to http://127.0.0.1:5000 to access the profile form.
 #### Job Scraping and Resume Generation
 
 ```bash
-python artisan-builder.py --url "JOB_POSTING_URL" --profile "your_profile.json" --content-gen-model "gpt-4.1-mini" --evaluation-model "claude-3-opus" --code-gen-model "gemini-2.5-pro" --output-format pdf
+python artisan-builder.py --url "JOB_POSTING_URL" --profile "your_profile.md" --content-gen-model "gpt-4o-mini" --evaluation-model "claude-3-5-sonnet-20241022" --content-iter 5
 ```
 
-- Job scraping modules for major platforms
-- User profile data collection web form
-- Data storage structures
+**Example with specific parameters:**
 
-Integration of AI components, evaluation systems, and resume generation are planned for future development.
+```bash
+python artisan-builder.py \
+  --url "https://www.linkedin.com/jobs/view/1234567890" \
+  --profile "test_profile_haneesh_raj.md" \
+  --content-gen-model "gpt-4o-mini" \
+  --evaluation-model "claude-3-5-sonnet-20241022" \
+  --code-gen-model "gemini-2.0-flash-exp" \
+  --output-format pdf \
+  --content-iter 5
+```
+
+**What this does:**
+
+1. **Scrapes** the job posting from the provided URL
+2. **Generates strategic approaches** for tailoring your resume to the specific role
+3. **Creates multiple resume versions** using different narrative strategies
+4. **Evaluates each resume** with detailed ATS compatibility, structure, and keyword matching scores
+5. **Iteratively improves** resume content based on evaluation feedback
+6. **Saves all versions** with complete audit trails in organized folders
+
+**Generated Output Structure:**
+
+```
+data/job-data/linkedin_[JobTitle]_[Timestamp]/
+├── strategies.md           # AI-generated tailoring strategies
+├── version_0/             # Initial generation
+│   ├── resume_1.md        # Strategy 1: Technical focus
+│   ├── resume_2.md        # Strategy 2: Leadership focus
+│   ├── resume_3.md        # Strategy 3: Project innovation
+│   ├── resume_4.md        # Strategy 4: Research focus
+│   ├── resume_5.md        # Strategy 5: Industry expertise
+│   └── evaluation.md      # Comprehensive scoring and feedback
+├── version_1/             # First improvement iteration
+│   ├── resume_1.md        # Improved based on feedback
+│   ├── ...
+│   └── evaluation.md
+└── version_2/             # Second improvement iteration
+    ├── resume_1.md        # Further refined content
+    ├── ...
+    └── evaluation.md
+```
 
 ## 🌱 Future Roadmap
 
+### Immediate Next Steps
+
+- **Document Export System**: PDF and Word document generation from optimized resume content
+- **Advanced ATS Optimization**: Enhanced keyword density analysis and formatting recommendations
+- **Performance Analytics**: Success tracking and job application outcome correlation
+
+### Extended Features
+
 - **CV Generator**: Create tailored CVs focused on academic and research profiles
-- **Interview Question Generator**: Generate role-specific interview questions
-- **Modular AI agent extensions**: Add-ons for grammar polishing, tone adjustment, and cover letter generation
+- **Cover Letter Generation**: Automated cover letter creation aligned with resume content
+- **Interview Question Generator**: Generate role-specific interview questions based on resume content
+- **Multi-Language Support**: Generate resumes in different languages for international opportunities
+
+### Technical Enhancements
+
+- **GUI Development**: Electron-based desktop application for non-technical users
+- **API Integration**: Direct integration with job board APIs for real-time job matching
+- **Local LLM Support**: Integration with locally-hosted language models for privacy-focused users
+- **Resume Templates**: Multiple professional template options with industry-specific designs
 
 ## Technologies
 

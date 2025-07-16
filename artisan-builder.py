@@ -305,9 +305,7 @@ def main():
                 print(f"Using evaluation feedback from previous iteration: {eval_response}")
                 
                 print(f"Generating improved resume content for version {iteration}...")
-                # Use the previous evaluation feedback to generate improved resume content
-                # Use the strategies from the previous iteration to generate improved resume content
-                # Generate improved resume content based on previous content and evaluation feedback
+             
                 
                 for j in range(cfg["agent"]["content-gen"]["iter"]):
                     strategy = strategies[j]
@@ -371,12 +369,7 @@ def main():
                 print(f"Reached the maximum improvement iterations: {improve_rate}. Stopping further iterations.")
                 break
             
-            
 
-            
-                
-                
-             
          
 
     except Exception as e:
