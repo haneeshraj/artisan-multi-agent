@@ -121,7 +121,7 @@ def scrape_linkedin_job(url):
                 "description": description
             }
 
-            print(f"📄 Job details extracted: {job_details}")
+            print(f"📄 Job details extracted!")
 
             # Save job details to JSON and Markdown files
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
